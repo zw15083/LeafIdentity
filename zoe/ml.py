@@ -4,16 +4,16 @@ import matplotlib.pyplot as plt
 from scipy.misc import imread
 
 norm = 32640
-y = imread('wb1127-03-2.jpg')
-Y = y[:,:,2]
+y = imread('pi2613-01-1.jpg')
+Y = y[:,:,1]
 x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
 leaf = imread('leaf.jpg')
-background2 = imread('back2.jpg')
+#background2 = imread('back2.jpg')
 background3 = imread('back3.jpg')
 plt.figure(1)
 histy = plt.hist(leaf.ravel(),256,[0,256])[0]
 fore = histy/norm
-hists = plt.hist(background3.ravel(),256,[0,256])[0] + plt.hist(background2.ravel(),256,[0,256])[0]
+hists = plt.hist(background3.ravel(),256,[0,256])[0] # + plt.hist(background2.ravel(),256,[0,256])[0]
 back = hists/norm
 plt.show()
 
