@@ -7,7 +7,7 @@ from sklearn.mixture import GaussianMixture
 from scipy.stats import multivariate_normal
 
 norm = 32640
-y = imread('wb1127-03-2.jpg')
+y = imread('wb1127-03-2')
 
 
 def CutOut(y):
