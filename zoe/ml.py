@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.misc import imread
 
 norm = 32640
-y = imread('pi2613-01-1.jpg')
+y = imread('wb1127-05-2.jpg')
 Y = y[:,:,1]
 x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
 leaf = imread('leaf.jpg')
