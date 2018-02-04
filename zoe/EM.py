@@ -1,13 +1,16 @@
 from numpy import *
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.misc import imread
+from scipy.misc import *
+import os
 import cv2
 from sklearn.mixture import GaussianMixture
 from scipy.stats import multivariate_normal
 
 norm = 32640
-y = imread('wb1127-03-2.jpg')
+#y = imread('wb1127-03-2.jpg')
+input_path = './Leaf_Samples/'
+output_path = './output_segments/'
 
 
 def CutOut(y):
@@ -39,9 +42,9 @@ def CutOut(y):
 	XX = np.array([X.ravel(), Y.ravel()]).T
 	Z = gmm.score_samples(XX)
 	Z = Z.reshape((200,256))
-	plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
-	plt.contour(X, Y, Z)
-	plt.show()
+	# plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
+	# plt.contour(X, Y, Z)
+	# plt.show()
     
 	x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
     
@@ -80,20 +83,36 @@ def CutOut(y):
 		x = 1-x
                 
                 
-	plt.imshow(x)
-	plt.show()
+	# plt.imshow(x)
+	# plt.show()
     
-	x2 = np.zeros(y.shape)
-	x2[:,:,0] = x
-	x2[:,:,1] = x
-	x2[:,:,2] = x
-	d = x2*y
-	d = d.astype(np.uint8)
-	plt.imshow(d)
-	plt.show()
+	# x2 = np.zeros(y.shape)
+	# x2[:,:,0] = x
+	# x2[:,:,1] = x
+	# x2[:,:,2] = x
+	# d = x2*y
+	# d = d.astype(np.uint8)
+	# plt.imshow(d)
+	# plt.show()
     
     
     
-	return d
+	return x
 
-y = CutOut(y)
+#y = CutOut(y)
+
+folders = next(os.walk(input_path))[1]
+
+for folder in folders:
+	files = next(os.walk(input_path+folder))[2]
+	
+	#create the output folder if it doesn't exist
+	if not os.path.exists(output_path + folder):
+		os.makedirs(output_path + folder)
+	
+	#go through all the images under this label (folder)
+	for file in files:
+		print('yay')
+		x = imread(input_path+folder+'/'+file)
+		y = CutOut(x)
+		imsave(output_path + folder + '/' + file, y)
