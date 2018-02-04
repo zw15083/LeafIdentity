@@ -5,16 +5,17 @@ from scipy.misc import imread
 import cv2
 from sklearn.mixture import GaussianMixture
 from scipy.stats import multivariate_normal
+from sklearn.cluster import KMeans
 
 norm = 32640
-y = imread('wb1127-03-2.jpg')
+y1 = imread('wb1127-05-2.jpg')
 
-
-def CutOut(y):
+def CutOut(y1):
+    y = cv2.blur(y1,(1,1))
     hsv = cv2.cvtColor(y, cv2.COLOR_BGR2HSV)
     hsv_shape = hsv.shape
     gmm = GaussianMixture(n_components=2,covariance_type='diag')
-    
+    hsv1 = cv2.cvtColor(y1, cv2.COLOR_BGR2HSV)
     SV = np.zeros((hsv_shape[0]*hsv_shape[1],2))
     
     #lu[:,0] = hsv[:,:,0].flatten()
@@ -64,10 +65,10 @@ def CutOut(y):
     
     for j in range(M):
         for i in range(N):    
-            p1 = multivariate_normal.pdf(np.array([hsv[j,i,1]/max1,hsv[j,i,2]/max2]), mu1, \
+            p1 = multivariate_normal.pdf(np.array([hsv1[j,i,1]/max1,hsv1[j,i,2]/max2]), mu1, \
                      cov1, allow_singular=False)
-            p2 = multivariate_normal.pdf(np.array([hsv[j,i,1]/max1,hsv[j,i,2]/max2]), mu2, \
-                     cov2, allow_singular=False) 
+            p2 = multivariate_normal.pdf(np.array([hsv1[j,i,1]/max1,hsv1[j,i,2]/max2]), mu2, \
+                     100*cov2, allow_singular=False) 
             if p1 < p2:
                 x[j,i] = 1
             else:
@@ -84,7 +85,7 @@ def CutOut(y):
     x2[:,:,0] = x
     x2[:,:,1] = x
     x2[:,:,2] = x
-    d = x2*y
+    d = x2*y1
     d = d.astype(np.uint8)
     plt.imshow(d)
     plt.show()
@@ -93,4 +94,4 @@ def CutOut(y):
     
     return d
 
-y = CutOut(y)
+d = CutOut(y1)
