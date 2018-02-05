@@ -8,9 +8,6 @@ from sklearn.mixture import GaussianMixture
 from scipy.stats import multivariate_normal
 from sklearn.cluster import KMeans
 
-norm = 32640
-y1 = imread('wb1127-05-2.jpg')
-
 def CutOut(y1):
     y = cv2.blur(y1,(1,1))
     hsv = cv2.cvtColor(y, cv2.COLOR_BGR2HSV)
@@ -36,13 +33,13 @@ def CutOut(y1):
     #lu[:,2] = lu[:,2]/max3
     gmm.fit(SV)
     
-    X, Y = np.meshgrid(np.linspace(0, 1,256), np.linspace(0,1,200))
-    XX = np.array([X.ravel(), Y.ravel()]).T
-    Z = gmm.score_samples(XX)
-    Z = Z.reshape((200,256))
-    plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
-    plt.contour(X, Y, Z)
-    plt.show()
+#    X, Y = np.meshgrid(np.linspace(0, 1,256), np.linspace(0,1,200))
+#    XX = np.array([X.ravel(), Y.ravel()]).T
+#    Z = gmm.score_samples(XX)
+#    Z = Z.reshape((200,256))
+#    plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
+#    plt.contour(X, Y, Z)
+#    plt.show()
     
     x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
     
@@ -70,32 +67,44 @@ def CutOut(y1):
                      cov1, allow_singular=False)
             p2 = multivariate_normal.pdf(np.array([hsv1[j,i,1]/max1,hsv1[j,i,2]/max2]), mu2, \
                      100*cov2, allow_singular=False) 
-            if p1 < p2:
+            if p1 > p2:
                 x[j,i] = 1
             else:
                 x[j,i] = 0
-=======
+                
+    d = y1
+    d[:,:,0] = x*y1[:,:,0]
+    d[:,:,1] = x*y1[:,:,1]
+    d[:,:,2] = x*y1[:,:,2]
+    return x,d
+    
+
+#y1 = imread('wb1127-05-2.jpg')
+#x,d = CutOut(y1)
+#
+#plt.imshow(x)
+#plt.show()
+#plt.imshow(d)
+#plt.show()
+#
 #y = imread('wb1127-03-2.jpg')
 input_path = './Leaf_Samples/'
 output_path = './output_segments/'
 
-
-
-d = CutOut(y1)
-
-
 folders = next(os.walk(input_path))[1]
 
 for folder in folders:
-	files = next(os.walk(input_path+folder))[2]
+    files = next(os.walk(input_path+folder))[2]
 	
 	#create the output folder if it doesn't exist
-	if not os.path.exists(output_path + folder):
-		os.makedirs(output_path + folder)
+    if not os.path.exists(output_path + folder):
+        os.makedirs(output_path + folder)
 	
 	#go through all the images under this label (folder)
-	for file in files:
-		print('yay')
-		x = imread(input_path+folder+'/'+file)
-		y = CutOut(x)
-		imsave(output_path + folder + '/' + file, y)
+    for file in files:
+        print('yay')
+        y = imread(input_path+folder+'/'+file)
+        y = y[1:550,1:550,:]
+        x,d = CutOut(y)
+        imsave(output_path + folder + '/' + file, x)
+		
