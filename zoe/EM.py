@@ -77,12 +77,14 @@ def CutOut(y1):
                 x[j,i] = 1
             else:
                 x[j,i] = 0
+
     x = erosion(x, disk(5))
     x = dilation(x, disk(4))
     plt.imshow(x)
     plt.show()
 
     s = skeletonize(x == 1)
+
 
     d = y1
     d[:,:,0] = x*y1[:,:,0]
@@ -123,4 +125,5 @@ plt.show()
 #        y = y[1:550,1:550,:]
 #        x,d = CutOut(y)
 #        imsave(output_path + folder + '/' + file, x)
+
 		
