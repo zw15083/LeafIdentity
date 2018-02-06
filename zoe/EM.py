@@ -74,7 +74,7 @@ def CutOut(y1):
                 x[j,i] = 1
             else:
                 x[j,i] = 0
-=======
+
 #y = imread('wb1127-03-2.jpg')
 input_path = './Leaf_Samples/'
 output_path = './output_segments/'
