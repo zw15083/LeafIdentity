@@ -1,9 +1,30 @@
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
-file_direct = '/Users/arthurdodson/Documents/MDM/Leaves/leafsnap-dataset/dataset/segmented/lab/'
-leaf = 'acer_pseudoplatanus/wb1561-07-4.png'
-fileid = file_direct+leaf
+def leaf_list(path, name):
+    text_file = open(path, 'r')
+   # file_direct = '/Users/arthurdodson/Documents/MDM/Leaves/leafsnap-dataset/'
+    text_file_list = text_file.readlines()
+    the_line1 = next((s for s in text_file_list if name in s), None)  # returns 'str containing name
+    index_number1 = text_file_list.index(the_line1)
+    del text_file_list[0:index_number1]
+    revearse_list = text_file_list[::-1]
+    the_line2 = next((s for s in revearse_list if name in s), None)  # returns 'str containing name
+    index_number2 = text_file_list.index(the_line2)
+    del text_file_list[(index_number2+1):]
+    # text_file_list = section of directories for a given tree, 'name'
+    directory_list = []
+
+    for index in range(len(text_file_list)):
+        line = text_file_list[index]
+        segmented_line1 = line.find('\t', 20)
+        line = line[(segmented_line1+1):]
+        segmented_line2 = line.find('\t', 10)
+        line = line[0:segmented_line2] #store string in list
+        directory_list.append(line)
+
+    return directory_list
 
 def read_image(fileid):
     im = cv2.imread(fileid,0)
@@ -63,22 +84,40 @@ def sector_mask(shape,centre,radius,angle_range):
 
     return mask
 
-def feature_extract(mag_spec):
+def feature_extract(mag_spec): #3D features
     mag_spec[mag_spec < 170] = 0 #filtering out lower values
+# maybe mag_spec is changing ever time hence the shape is different?
+    center_imx = int(mag_spec.shape[1]/2)
+    center_imy = int(mag_spec.shape[0]/2)
 
-    f1 = sector_mask(mag_spec.shape,(150,300),30,(0,360))
-    f2 = sector_mask(mag_spec.shape,(200,400),30,(0,360))
-    f3 = sector_mask(mag_spec.shape,(300,440),30,(0,360))
-    f4 = sector_mask(mag_spec.shape,(400,400),30,(0,360))
-    f5 = sector_mask(mag_spec.shape,(430,300),30,(0,360))
-    f6 = sector_mask(mag_spec.shape,(400,200),30,(0,360))
-    f7 = sector_mask(mag_spec.shape,(300,150),30,(0,360))
-    f8 = sector_mask(mag_spec.shape,(180,200),30,(0,360))
-    mask = f1#+f2+f3+f4+f5+f6+f7+f8)
+    f1 = sector_mask(mag_spec.shape,(180,90),30,(0,360))
+    f2 = sector_mask(mag_spec.shape,(150,350),30,(0,360))
 
-    features = mag_spec[~mask]
-    value = np.log(np.sum(features**2))
-    return value
+    f11 = sector_mask(mag_spec.shape,(270,40),30,(0,360))
+    f12 = sector_mask(mag_spec.shape,(450,450),30,(0,360))
+
+    fs1 = sector_mask(mag_spec.shape,(center_imy,center_imx),130,(251,291))
+
+    fs2 = sector_mask(mag_spec.shape,(center_imy,center_imx),130,(26,66))
+
+    mask1 = f1 + f2 # circles
+    mask2 = f11 + f12
+    mask3 = fs1 # sectors ... two circles = area of sector
+    mask4 = fs2
+
+    selections = [mask1,mask2,mask3,mask4]
+
+    kernel = []
+
+    for index in range(len(selections)):
+        features = np.copy(mag_spec)
+        features[~(selections[index])] = 0
+        value = np.log(np.sum(features**2))
+        kernel.append(value)
+
+    return kernel
+
+
 
 
 
