@@ -11,8 +11,7 @@ from skimage.morphology import erosion, dilation, opening, closing, white_tophat
 from skimage.morphology import black_tophat, skeletonize, convex_hull_image
 from skimage.morphology import disk
 from scipy.signal import convolve2d
-import time
-start = time.time()
+
 
 
 def CutOut(y):
@@ -43,14 +42,7 @@ def CutOut(y):
         for j in range(shape(y)[1]):
             p.append([hsv[i,j,1]/max1,hsv[i,j,2]/max2])
         P.append(p)
-        
 
-    
-    x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
-    
-    M = shape(y)[0]
-    N = shape(y)[1]
-    
     MeanS = gmm.means_[:][0]
     
     if MeanS[0] > MeanS[1]:
@@ -102,9 +94,6 @@ x,s = CutOut(y1)
 plt.imshow(s)
 plt.show()
 
-
-end = time.time()
-print(end - start)
 
 #
 #y = imread('wb1127-03-2.jpg')
