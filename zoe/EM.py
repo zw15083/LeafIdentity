@@ -11,7 +11,8 @@ from skimage.morphology import erosion, dilation, opening, closing, white_tophat
 from skimage.morphology import black_tophat, skeletonize, convex_hull_image
 from skimage.morphology import disk
 from scipy.signal import convolve2d
-
+import time
+start = time.time()
 
 
 def CutOut(y):
@@ -23,11 +24,10 @@ def CutOut(y):
 
     Saturation = hsv[:,:,1].flatten()
     Value = hsv[:,:,2].flatten()
-    
-    for i in range(Saturation.size):
-        if Saturation[i] != 0 and Value[i] !=0:
-            SV[i,0] = Saturation[i]
-            SV[i,1] = Value[i]
+    P = []
+
+    SV[:,0] = Saturation
+    SV[:,1] = Value
     
     max1 = np.max(Saturation[:])
     max2 = np.max(Value[:])
@@ -37,6 +37,13 @@ def CutOut(y):
 
     gmm.fit(SV)
     
+    
+    for i in range(shape(y)[0]):
+        p = []
+        for j in range(shape(y)[1]):
+            p.append([hsv[i,j,1]/max1,hsv[i,j,2]/max2])
+        P.append(p)
+        
 
     
     x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
@@ -59,50 +66,47 @@ def CutOut(y):
         cov2 = gmm.covariances_[0]
         cov1 = gmm.covariances_[1]    
     
-    X, Y = np.meshgrid(np.linspace(0, 1,256), np.linspace(0,1,200))
-    XX = np.array([X.ravel(), Y.ravel()]).T
-    Z = gmm.score_samples(XX)
-    Z = Z.reshape((200,256))
-    plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
-    plt.contour(X, Y, Z)
-    plt.show()
+#    X, Y = np.meshgrid(np.linspace(0, 1,256), np.linspace(0,1,200))
+#    XX = np.array([X.ravel(), Y.ravel()]).T
+#    Z = gmm.score_samples(XX)
+#    Z = Z.reshape((200,256))
+#    plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
+#    plt.contour(X, Y, Z)
+#    plt.show()
 
+    p1 = multivariate_normal(mu1, cov1)
+    p2 = multivariate_normal(mu2, cov2)
     
-    for j in range(M):
-        for i in range(N):    
-            p1 = multivariate_normal.pdf(np.array([hsv[j,i,1]/max1,hsv[j,i,2]/max2]), mu1, \
-                     cov1, allow_singular=False)
-            p2 = multivariate_normal.pdf(np.array([hsv[j,i,1]/max1,hsv[j,i,2]/max2]), mu2, \
-                     cov2, allow_singular=False) 
-            if p1 > p2:
-                x[j,i] = 1
-            else:
-                x[j,i] = 0
+    p1 = p1.pdf(P)
+    p2 = p2.pdf(P)
+    
+    x = np.heaviside(p1-p2,0)
 
     s = erosion(x, disk(5))
     s = dilation(s, disk(4))
     plt.imshow(x)
     plt.show()
     
-    d = y1
-    d[:,:,0] = x*y1[:,:,0]
-    d[:,:,1] = x*y1[:,:,1]
-    d[:,:,2] = x*y1[:,:,2]
-
-    return x,d,s
+    return x,s
     
 
 y1 = imread('ny1053-04-2.jpg')
+
+
 plt.imshow(y1)
 plt.show()
-x,d,s = CutOut(y1)
+
+
+x,s = CutOut(y1)
 
 plt.imshow(s)
 plt.show()
 
-plt.imshow(d)
-plt.show()
 
+end = time.time()
+print(end - start)
+
+#
 #y = imread('wb1127-03-2.jpg')
 #input_path = './Leaf_Samples/'
 #output_path = './output_segments/'

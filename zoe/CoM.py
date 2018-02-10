@@ -9,4 +9,4 @@ def FindCom(x):
     cY = int(M["m01"] / M["m00"])
     return cX,cY
 
-cX,cY = FindCom(x)
+cX,cY = FindCom(s)
