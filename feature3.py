@@ -6,7 +6,7 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 
 def main():
-    img=cv2.imread('weedcolour3.jpg')
+    img=cv2.imread('leaf1.jpg')
     
     grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grey, 127, 255,
@@ -26,8 +26,8 @@ def main():
     cRow = int(M['m01']/M['m00'])       
     ###### 
     
-    deltaY = nnz[0] - cRow;
-    deltaX = nnz[1] - cCol;
+    deltaY = nnz[0] - cRow
+    deltaX = nnz[1] - cCol
     #print(cx,cy)
     #print(deltaX)
     #print(np.where(nnz[1] == cCol))
@@ -37,13 +37,13 @@ def main():
         if deltaX[i]!=0:
             angles[i] = np.arctan(deltaY[i]/deltaX[i])
         elif nnz[0][i]>cRow:
-            angles[i]=90
+            angles[i]=0
         else:
-            angles[i]=-90
+            angles[i]=0
         
-    print(sorted(angles*100))       
-    
-      
+    #print(sorted(angles*100))       
+    distances = np.sqrt((nnz[0] - cRow)**2 + (nnz[1] - cCol)**2)
+    plt.plot(angles*100,distances,'.')  
     '''visualise centroid set to 255 for white lines
     edges[127,:]=0 
     edges[:,128]=0  
