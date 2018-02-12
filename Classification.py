@@ -6,8 +6,8 @@ import os
 label_names = ['Acer','Aesculus','Betula','Carya','Cornus','Fraxinus',
 				'Magnolia','Malus','Pinus','Populus','Prunus','Quercus','Salix']
 labels = []
-
-input_path = './Lab/Train/'  
+#it is possible to get this to seperate into test/training data
+input_path = './Leaves/Lab/Train/'  
 folders = next(os.walk(input_path))[1]
 fol = 0
 features = []
