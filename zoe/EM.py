@@ -14,97 +14,88 @@ from scipy.signal import convolve2d
 
 
 
-def CutOut(y1):
-    y = cv2.blur(y1,(1,1))
+def CutOut(y):
     hsv = cv2.cvtColor(y, cv2.COLOR_BGR2HSV)
     hsv_shape = hsv.shape
     gmm = GaussianMixture(n_components=2,covariance_type='diag')
-    hsv1 = cv2.cvtColor(y1, cv2.COLOR_BGR2HSV)
     SV = np.zeros((hsv_shape[0]*hsv_shape[1],2))
     
-    #lu[:,0] = hsv[:,:,0].flatten()
+
     Saturation = hsv[:,:,1].flatten()
     Value = hsv[:,:,2].flatten()
+    P = []
+
+    SV[:,0] = Saturation
+    SV[:,1] = Value
     
-    for i in range(Saturation.size):
-        if Saturation[i] != 0 and Value[i] !=0:
-            SV[i,0] = Saturation[i]
-            SV[i,1] = Value[i]
-    
-    max1 = 1#np.max(SV[:,0])
-    max2 = 1#np.max(SV[:,1])
-    #max3 = np.max(lu[:,2])
+    max1 = np.max(Saturation[:])
+    max2 = np.max(Value[:])
+
     SV[:,0] = SV[:,0]/max1
     SV[:,1] = SV[:,1]/max2
-    #lu[:,2] = lu[:,2]/max3
+
     gmm.fit(SV)
     
-    X, Y = np.meshgrid(np.linspace(0, 1,256), np.linspace(0,1,200))
-    XX = np.array([X.ravel(), Y.ravel()]).T
-    Z = gmm.score_samples(XX)
-    Z = Z.reshape((200,256))
-    plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
-    plt.contour(X, Y, Z)
-    plt.show()
     
-    x = np.random.randint(2, size=(shape(y)[0], shape(y)[1]))
-    
-    M = shape(y)[0]
-    N = shape(y)[1]
-    
+    for i in range(shape(y)[0]):
+        p = []
+        for j in range(shape(y)[1]):
+            p.append([hsv[i,j,1]/max1,hsv[i,j,2]/max2])
+        P.append(p)
+
     MeanS = gmm.means_[:][0]
     
     if MeanS[0] > MeanS[1]:
         mu1 = gmm.means_[0]
         mu2 = gmm.means_[1]
+        gmm.covariances_[1] = 100*gmm.covariances_[1]
         cov1 = gmm.covariances_[0]
         cov2 = gmm.covariances_[1]
     else:
         mu2 = gmm.means_[0]
-        mu1 = gmm.means_[1]        
+        mu1 = gmm.means_[1] 
+        gmm.covariances_[0] = 100*gmm.covariances_[0]
         cov2 = gmm.covariances_[0]
         cov1 = gmm.covariances_[1]    
     
-    
-    
-    for j in range(M):
-        for i in range(N):    
-            p1 = multivariate_normal.pdf(np.array([hsv1[j,i,1]/max1,hsv1[j,i,2]/max2]), mu1, \
-                     cov1, allow_singular=False)
-            p2 = multivariate_normal.pdf(np.array([hsv1[j,i,1]/max1,hsv1[j,i,2]/max2]), mu2, \
-                     100*cov2, allow_singular=False) 
-            if p1 > p2:
-                x[j,i] = 1
-            else:
-                x[j,i] = 0
+#    X, Y = np.meshgrid(np.linspace(0, 1,256), np.linspace(0,1,200))
+#    XX = np.array([X.ravel(), Y.ravel()]).T
+#    Z = gmm.score_samples(XX)
+#    Z = Z.reshape((200,256))
+#    plt.scatter(SV[:, 0], SV[:, 1],0.25,'b')
+#    plt.contour(X, Y, Z)
+#    plt.show()
 
-    x = erosion(x, disk(5))
-    x = dilation(x, disk(4))
+    p1 = multivariate_normal(mu1, cov1)
+    p2 = multivariate_normal(mu2, cov2)
+    
+    p1 = p1.pdf(P)
+    p2 = p2.pdf(P)
+    
+    x = np.heaviside(p1-p2,0)
+
+    s = erosion(x, disk(5))
+    s = dilation(s, disk(4))
     plt.imshow(x)
     plt.show()
-
-    s = skeletonize(x == 1)
-
-
-    d = y1
-    d[:,:,0] = x*y1[:,:,0]
-    d[:,:,1] = x*y1[:,:,1]
-    d[:,:,2] = x*y1[:,:,2]
-
-    return x,d,s
+    
+    return x,s
     
 
 y1 = imread('ny1053-04-2.jpg')
+
+
 plt.imshow(y1)
 plt.show()
-x,d,s = CutOut(y1)
+
+
+x,s = CutOut(y1)
 
 plt.imshow(s)
 plt.show()
 
-plt.imshow(d)
-plt.show()
 
+#
 #y = imread('wb1127-03-2.jpg')
 #input_path = './Leaf_Samples/'
 #output_path = './output_segments/'
