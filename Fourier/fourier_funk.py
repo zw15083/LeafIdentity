@@ -27,15 +27,15 @@ def leaf_list(path, name):
     return directory_list
 
 def read_image(fileid):
-    im = cv2.imread(fileid,0)
-    pixel_num = np.min(im.shape)
+    im_norm = cv2.imread(fileid,0)
+    """pixel_num = np.min(im.shape)
     pixel_ind = np.argmin(im.shape)
     if (pixel_ind == 0):
         im_norm = im[0:pixel_num][:, 0:pixel_num]
         return im_norm
     else:
-        im_norm = im[0:pixel_num][0:pixel_num, :]
-        return im_norm
+        im_norm = im[0:pixel_num][0:pixel_num, :]"""
+    return im_norm
 
 def contour(im_norm):
     # Contour of leaf on plain background, thickness 10
@@ -43,7 +43,8 @@ def contour(im_norm):
     ret, thresh = cv2.threshold(im_norm, 127, 255, 0)
 
     image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    leaf_contour = cv2.drawContours(np.zeros((pixel_num, pixel_num)), contours, 0, (255, 255, 255), 8)
+    leaf_contour = cv2.drawContours(np.zeros(im_norm.shape), contours, -1, (255, 255, 255), 8)
+    #note, argument = -1 draws all contours
 
     return leaf_contour
 
@@ -55,13 +56,12 @@ def fft_im(leaf_contour):
 
 def sector_mask(shape,centre,radius,angle_range):
     """
-    Return a boolean mask for a circular sector. The start/stop angles in
-    `angle_range` should be given in clockwise order.
+    The start/stop angles in `angle_range` are in clockwise order.
     """
 
-    x,y = np.ogrid[:shape[0],:shape[1]]
-    cx,cy = centre
-    tmin,tmax = np.deg2rad(angle_range)
+    x, y = np.ogrid[:shape[0], :shape[1]]
+    cx, cy = centre
+    tmin, tmax = np.deg2rad(angle_range)
 
     # ensure stop angle > start angle
     if tmax < tmin:
@@ -87,15 +87,18 @@ def sector_mask(shape,centre,radius,angle_range):
 def feature_extract(mag_spec): #3D features
     mag_spec[mag_spec < 170] = 0 #filtering out lower values
 # maybe mag_spec is changing ever time hence the shape is different?
-    center_imx = int(mag_spec.shape[1]/2)
-    center_imy = int(mag_spec.shape[0]/2)
 
-    f1 = sector_mask(mag_spec.shape,(180,90),30,(0,360))
-    f2 = sector_mask(mag_spec.shape,(150,350),30,(0,360))
+    imx = mag_spec.shape[1]
+    imy =  mag_spec.shape[0]
 
-    f11 = sector_mask(mag_spec.shape,(270,40),30,(0,360))
-    f12 = sector_mask(mag_spec.shape,(450,450),30,(0,360))
+    f1 = sector_mask(mag_spec.shape,((imy*1/3),(imx*1/6)),30,(0,360))
+    f2 = sector_mask(mag_spec.shape,((imy*1/4),(imx*3/4)),30,(0,360))
 
+    f11 = sector_mask(mag_spec.shape,(imy*1/2 ,imx*1/10),30,(0,360))
+    f12 = sector_mask(mag_spec.shape,(imy*2/3,imx*1/3),30,(0,360))
+
+    center_imx = int(imx/2)
+    center_imy = int(imy/2)
     fs1 = sector_mask(mag_spec.shape,(center_imy,center_imx),130,(251,291))
 
     fs2 = sector_mask(mag_spec.shape,(center_imy,center_imx),130,(26,66))
@@ -113,15 +116,19 @@ def feature_extract(mag_spec): #3D features
         features = np.copy(mag_spec)
         features[~(selections[index])] = 0
         value = np.log(np.sum(features**2))
+        if np.isinf(value):
+            value = 0
         kernel.append(value)
 
     return kernel
 
 
+def data_split():
+    numpy.random.shuffle()
+    training, test = x[:80, :], x[80:, :]
+    xs = kernel[0][0:142][:]
 
-
-
-
+def kmeans():"""
 
 
 
