@@ -6,7 +6,7 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 
 def main():
-    img=cv2.imread('lol.jpg')
+    img=cv2.imread('weedcolour.jpg')
     
     grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grey, 127, 255,
@@ -47,12 +47,13 @@ def main():
     #print(sorted(angles*100))       
     distances = np.sqrt((nnz[0] - cRow)**2 + (nnz[1] - cCol)**2)
     plt.plot(angles*100,distances,'.')  
+	plt.show()
     '''visualise centroid set to 255 for white lines
     edges[127,:]=0 
     edges[:,128]=0  
     '''    
     #cv2.imshow('edges', edges)
     
-    
-if __name__ == "__main__":
-    main()
+main()
+# if __name__ == "__main__":
+    # main()

@@ -11,7 +11,8 @@ label_names = ['Acer','Aesculus','Betula','Carya','Cornus','Fraxinus',
 				'Magnolia','Malus','Pinus','Populus','Prunus','Quercus','Salix']
 labels = []
 #it is possible to get this to seperate into test/training data
-input_path = '../LabSeg2/TrainSeg2/'  
+#input_path = '../LabSeg2/TrainSeg2/'
+input_path = '../Leaves/Lab/Train/'
 folders = next(os.walk(input_path))[1]
 fol = 0
 features = []
