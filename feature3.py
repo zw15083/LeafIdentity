@@ -7,8 +7,8 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 
 def main():
-    img=cv2.imread('weedcolour.jpg')
-    cv2.imshow('original2',img)
+    img=cv2.imread('leaf1.jpg')
+    
     grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grey, 127, 255,
                                cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
@@ -27,13 +27,14 @@ def main():
     cx = int(M['m10']/M['m00'])
     cy = int(M['m01']/M['m00'])       
     
+    img[cy,:]=255
+    img[:,cx]=255
+          
+        
+    cv2.imshow('original1',img)
     ##normalised vector
-    ax=cx-20   #a point with same row but different col
-    ay=cy
-    
-    ux=ax-cx
-    uy=ay-cy
-    u=[ux,uy]
+    utop=[-20,0]
+    ubot=[20,0]
     
     #edge vector
     vx = nnz[1] - cx
@@ -45,16 +46,30 @@ def main():
     for i in range(0,z):
         #find angle
         if nnz[0][i]>cy:#if edge point is under norm vector, add 180 deg
-             angles[i]=np.arccos(np.dot(u,[vx[i],vy[i]])/(norm(u)*norm([vx[i],vy[i]])))*(180/np.pi)+180
+             angles[i]=np.arccos(np.dot(ubot,[vx[i],vy[i]])/(norm(ubot)*norm([vx[i],vy[i]])))*(180/np.pi)+180
              
         else:
-             angles[i]=np.arccos(np.dot(u,[vx[i],vy[i]])/(norm(u)*norm([vx[i],vy[i]])))*(180/np.pi)
+             angles[i]=np.arccos(np.dot(utop,[vx[i],vy[i]])/(norm(utop)*norm([vx[i],vy[i]])))*(180/np.pi)
         
         #find radius
         radius[i]=norm([vx[i],vy[i]])
-        
-        
-        #plot radius vs angle
+    #print(cx,cy)    
+    print(np.argmax(radius))
+#    arg=np.argmax(radius)
+#    angNorm=angles[arg]
+##    print(angles)
+#    print(angles) 
+#    angles[arg:]-=angNorm
+#    angles[:arg]+=360-angNorm
+#    #print(angles)
+#        #plot radius vs angle
+#    #plt.plot(angles,radius,'.')  
+#    #print(max(radius))
+#    #angles=np.roll(angles,len(radius)-arg)
+#    radius=np.roll(radius,len(radius)-arg)
+#    print(radius[0])
+    #print(angles)
+    #plt.figure()  
     plt.plot(angles,radius,'.')  
     
     
