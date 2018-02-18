@@ -7,7 +7,7 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 
 def main():
-    img=cv2.imread('lol.jpg')
+    img=cv2.imread('weedcolour.jpg')
     
     grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grey, 127, 255,
@@ -54,15 +54,18 @@ def main():
         #find radius
         radius[i]=norm([vx[i],vy[i]])
     
+    
     #sort radius based on increasing angles
     myZip=list(zip(angles,radius))
     RS= [ x[1] for x in sorted(myZip) ]  #RS means radiusSorted
+    
+    #start radius list with max value     
     radiusSorted=np.concatenate([RS[np.argmax(RS):],RS[:np.argmax(RS)]])
     
     plt.figure()  
     
-    plt.plot(sorted(angles),radiusSorted,'.')  
-    
+    #plt.plot(sorted(angles),radiusSorted,'.')  
+    plt.plot(angles,radius,'.')  
     
     
     
