@@ -7,7 +7,7 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 
 def main():
-    img=cv2.imread('leaf1.jpg')
+    img=cv2.imread('lol.jpg')
     
     grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(grey, 127, 255,
@@ -56,26 +56,11 @@ def main():
     
     #sort radius based on increasing angles
     myZip=list(zip(angles,radius))
-    radiusSorted= [ x[1] for x in sorted(myZip) ]
+    RS= [ x[1] for x in sorted(myZip) ]  #RS means radiusSorted
+    radiusSorted=np.concatenate([RS[np.argmax(RS):],RS[:np.argmax(RS)]])
     
-    #print(cx,cy)    
-    #print(np.argmax(radius))
-#    arg=np.argmax(radius)
-#    angNorm=angles[arg]
-##    print(angles)
-#    print(angles) 
-#    angles[arg:]-=angNorm
-#    angles[:arg]+=360-angNorm
-#    #print(angles)
-#        #plot radius vs angle
-#    #plt.plot(angles,radius,'.')  
-#    #print(max(radius))
-#    #angles=np.roll(angles,len(radius)-arg)
-#    radius=np.roll(radius,len(radius)-arg)
-#    print(radius[0])
-    #print(angles)
     plt.figure()  
-    #plt.plot(angles,radius,'.')
+    
     plt.plot(sorted(angles),radiusSorted,'.')  
     
     
