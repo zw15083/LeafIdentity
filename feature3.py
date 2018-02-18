@@ -53,8 +53,13 @@ def main():
         
         #find radius
         radius[i]=norm([vx[i],vy[i]])
+    
+    #sort radius based on increasing angles
+    myZip=list(zip(angles,radius))
+    radiusSorted= [ x[1] for x in sorted(myZip) ]
+    
     #print(cx,cy)    
-    print(np.argmax(radius))
+    #print(np.argmax(radius))
 #    arg=np.argmax(radius)
 #    angNorm=angles[arg]
 ##    print(angles)
@@ -69,8 +74,9 @@ def main():
 #    radius=np.roll(radius,len(radius)-arg)
 #    print(radius[0])
     #print(angles)
-    #plt.figure()  
-    plt.plot(angles,radius,'.')  
+    plt.figure()  
+    #plt.plot(angles,radius,'.')
+    plt.plot(sorted(angles),radiusSorted,'.')  
     
     
     
