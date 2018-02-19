@@ -12,7 +12,7 @@ def main(data):
     #data='myTestFilled.jpg'
     #img=cv2.imread(data,0)
     img = data
-    #edges=cv2.Canny(img,100,200)
+    edges=cv2.Canny(img,100,200)
     shape=np.shape(img)
     #print(shape)
     midRow=int(shape[0]/2)
