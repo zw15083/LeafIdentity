@@ -7,6 +7,7 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 from EM import CutOut
 from scipy import ndimage
+import xlsxwriter
 
 def ExtractReg(angles,radius,n):
     fit = np.polyfit(angles,radius,n)
@@ -17,17 +18,24 @@ def ExtractReg(angles,radius,n):
     return ang,rad,fit,fitfn,error
 
 def Loco(nnz):
-    N = 10
+    N = 20
+    
+    
     
     x = nnz[1]
     y = nnz[0]
-    
+
     K = x.size
     
-    print(x[-2])
-    print(x[-1])
-    print(y[-2])
-    print(y[-1])
+#    workbook = xlsxwriter.Workbook('leafoutliner.xlsx')
+#    worksheet = workbook.add_worksheet()
+#    
+#    for i in range(K):
+#        worksheet.write(i, 0, x[i])
+#        worksheet.write(i, 1, y[i])
+#        
+#    workbook.close()
+        
     
     deltax = np.zeros(K)
     deltay = np.zeros(K)
@@ -38,7 +46,6 @@ def Loco(nnz):
 #    deltax = x[1:-1] - x[0:-2]
 #    deltay = y[1:-1] - y[0:-2]
     
-    print(deltax[-1]==x[-1]-x[-2])
     
     deltat = (deltax**2 + deltay**2)**0.5
     
@@ -55,7 +62,6 @@ def Loco(nnz):
     sumdeltaxj = xi
     sumdeltayj = xi
     
-    print(K)
     
     for i in range(2,K):
         sumdeltaxj[i] = sumdeltaxj[i-1] + deltax[i-1] 
@@ -165,21 +171,48 @@ def Loco(nnz):
     
     return locoL
 
+def contour(thresh):
+    # Contour of leaf on plain background, thickness 10
+
+
+    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    c = max(contours, key=cv2.contourArea) # draws largest contour
+
+    leaf_contour = cv2.drawContours(np.zeros(thresh.shape), [c], 0, (255, 255, 255), 8)
+    #note, argument = -1 draws all contours
+
+    return c, leaf_contour
+
 def main():
     
-    img=cv2.imread('zoe/pi2613-01-1.jpg')
+    img=cv2.imread('weedcolour.jpg')
     x1,s1,x2,s2 = CutOut(img)
-    thresh = 255*s2.astype(np.uint8)
-    kernel = np.ones((3,3),np.uint8)
-    edges = cv2.morphologyEx(thresh, cv2.MORPH_GRADIENT, kernel)
+    thresh = s2.astype(np.uint8)
+ #   kernel = np.ones((3,3),np.uint8)
+ #   edges = cv2.morphologyEx(thresh, cv2.MORPH_GRADIENT, kernel)
+ 
 
+    c,leafcontour = contour(thresh)
     
+    edges = np.zeros(thresh.shape)
+    
+    for i in range(c.shape[0]):
+        edges[c[i][0][1]][c[i][0][0]] = 1
+    
+ #   edges  = cv2.Laplacian(thresh, 2)
     nnz=np.nonzero(edges)
+ #   nnz2 = np.nonzero(edges2)
+    for i in range(c.shape[0]):
+        nnz[0][i] = c[i][0][0]
+        nnz[1][i] = c[i][0][1]
+        
+    
+  
     z=len(nnz[0])
 #    plt.imshow(thresh)
 #    plt.show()    
-#    plt.imshow(edges)
-#    plt.show()
+    plt.imshow(edges)
+    plt.show()
     #FIND CENTROID
     '''
     important: centroid is done on original image (before edge detection is  
@@ -223,25 +256,31 @@ def main():
         
         #plot radius vs angle
         
+    print(radius)
+        
     plt.scatter(angles, radius,0.1,'b')
     
     ##################################
-    n=10
+    n=20
     ang,rad,fit,fitfn,error = ExtractReg(angles,radius,n)
-    print(fit)
-    print(np.mean(error))
-    plt.plot(ang, rad, 'r')
-    plt.scatter(angles,error,0.1,'k')
+#    print(fit)
+#    print(np.mean(error))
+  #  plt.plot(ang, rad, 'r')
+   # plt.scatter(angles,error,0.1,'k')
     ###################################
+    
+#    for i in range()
+    
+    
 #    
 #    locoL = Loco(nnz)
 #    
-#    print(locoL)
+ #   print(locoL)
     
     
-#    plt.show()
+    plt.show()
     
-#    return fit,np.mean(error)
+    return fit,np.mean(error)
     
     
 if __name__ == "__main__":
