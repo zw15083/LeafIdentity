@@ -7,13 +7,10 @@ np.set_printoptions(threshold=np.inf)
 
 #cv2.imwrite('myTest.jpg',edges)
 
-def main(data):
-    #data='dummyPics/ny1112-03-1.jpg'
-    #data='myTestFilled.jpg'
-    img=data
-    edges=cv2.Canny(img,100,200)
+def main(img):
+  
     shape=np.shape(img)
-    #print(shape)
+
     topRow=0
     botRow=int(shape[0]-1)
     leftCol=0
@@ -35,19 +32,18 @@ def main(data):
     
   
     
-    img[lu,lr:ll]=255 
-    img[ld,lr:ll]=255
-    img[ld:lu,ll]=255
-    img[ld:lu,lr]=255   
+    #img[lu,lr:ll]=255 
+    #img[ld,lr:ll]=255
+    #img[ld:lu,ll]=255
+    #img[ld:lu,lr]=255   
     #cv2.imshow('a',img)
     total_area=(lr-ll)*(ld-lu)
-    
     total_leaf=0
-    for row in range(lu,ld):
+    for row in range(ld,lu):
         total_leaf+=sum(img[row,:])
     
     ratio= total_leaf/255/total_area
-    
+
     return(ratio)
     
     
