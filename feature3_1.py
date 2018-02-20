@@ -7,10 +7,9 @@ from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
 from EM import CutOut
 from scipy import ndimage
-<<<<<<< HEAD
+
 import xlsxwriter
-=======
->>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
+
 
 def ExtractReg(angles,radius,n):
     fit = np.polyfit(angles,radius,n)
@@ -21,7 +20,7 @@ def ExtractReg(angles,radius,n):
     return ang,rad,fit,fitfn,error
 
 def Loco(nnz):
-<<<<<<< HEAD
+
     N = 20
     
     
@@ -40,7 +39,7 @@ def Loco(nnz):
 #        
 #    workbook.close()
         
-=======
+
     N = 10
     
     x = nnz[1]
@@ -52,7 +51,7 @@ def Loco(nnz):
     print(x[-1])
     print(y[-2])
     print(y[-1])
->>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
+
     
     deltax = np.zeros(K)
     deltay = np.zeros(K)
@@ -63,10 +62,7 @@ def Loco(nnz):
 #    deltax = x[1:-1] - x[0:-2]
 #    deltay = y[1:-1] - y[0:-2]
     
-<<<<<<< HEAD
-=======
-    print(deltax[-1]==x[-1]-x[-2])
->>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
+
     
     deltat = (deltax**2 + deltay**2)**0.5
     
@@ -82,11 +78,7 @@ def Loco(nnz):
     
     sumdeltaxj = xi
     sumdeltayj = xi
-    
-<<<<<<< HEAD
-=======
-    print(K)
->>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
+
     
     for i in range(2,K):
         sumdeltaxj[i] = sumdeltaxj[i-1] + deltax[i-1] 
@@ -196,7 +188,7 @@ def Loco(nnz):
     
     return locoL
 
-<<<<<<< HEAD
+
 def contour(thresh):
     # Contour of leaf on plain background, thickness 10
 
@@ -209,14 +201,44 @@ def contour(thresh):
 
     return c, leaf_contour
 
+#def main():
+#    
+#    img=cv2.imread('weedcolour.jpg')
+#    x1,s1,x2,s2 = CutOut(img)
+#    thresh = s2.astype(np.uint8)
+# #   kernel = np.ones((3,3),np.uint8)
+# #   edges = cv2.morphologyEx(thresh, cv2.MORPH_GRADIENT, kernel)
+# 
+#
+#    c,leafcontour = contour(thresh)
+#    
+#    edges = np.zeros(thresh.shape)
+#    
+#    for i in range(c.shape[0]):
+#        edges[c[i][0][1]][c[i][0][0]] = 1
+#    
+# #   edges  = cv2.Laplacian(thresh, 2)
+#    nnz=np.nonzero(edges)
+# #   nnz2 = np.nonzero(edges2)
+#    for i in range(c.shape[0]):
+#        nnz[0][i] = c[i][0][0]
+#        nnz[1][i] = c[i][0][1]
+#        
+#    
+#  
+#    z=len(nnz[0])
+##    plt.imshow(thresh)
+##    plt.show()    
+#    plt.imshow(edges)
+#    plt.show()
+
 def main():
     
-    img=cv2.imread('weedcolour.jpg')
+    img=cv2.imread('zoe/pi2613-01-1.jpg')
     x1,s1,x2,s2 = CutOut(img)
-    thresh = s2.astype(np.uint8)
- #   kernel = np.ones((3,3),np.uint8)
- #   edges = cv2.morphologyEx(thresh, cv2.MORPH_GRADIENT, kernel)
- 
+    thresh = 255*s2.astype(np.uint8)
+#    kernel = np.ones((3,3),np.uint8)
+#    edges = cv2.morphologyEx(thresh, cv2.MORPH_GRADIENT, kernel)
 
     c,leafcontour = contour(thresh)
     
@@ -224,38 +246,19 @@ def main():
     
     for i in range(c.shape[0]):
         edges[c[i][0][1]][c[i][0][0]] = 1
-    
- #   edges  = cv2.Laplacian(thresh, 2)
+
     nnz=np.nonzero(edges)
- #   nnz2 = np.nonzero(edges2)
     for i in range(c.shape[0]):
         nnz[0][i] = c[i][0][0]
-        nnz[1][i] = c[i][0][1]
+        nnz[1][i] = c[i][0][1]    
         
     
-  
-    z=len(nnz[0])
-#    plt.imshow(thresh)
-#    plt.show()    
-    plt.imshow(edges)
-    plt.show()
-=======
-def main():
-    
-    img=cv2.imread('zoe/pi2613-01-1.jpg')
-    x1,s1,x2,s2 = CutOut(img)
-    thresh = 255*s2.astype(np.uint8)
-    kernel = np.ones((3,3),np.uint8)
-    edges = cv2.morphologyEx(thresh, cv2.MORPH_GRADIENT, kernel)
-
-    
-    nnz=np.nonzero(edges)
     z=len(nnz[0])
 #    plt.imshow(thresh)
 #    plt.show()    
 #    plt.imshow(edges)
 #    plt.show()
->>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
+
     #FIND CENTROID
     '''
     important: centroid is done on original image (before edge detection is  
@@ -299,7 +302,7 @@ def main():
         
         #plot radius vs angle
         
-<<<<<<< HEAD
+
     print(radius)
         
     plt.scatter(angles, radius,0.1,'b')
@@ -320,7 +323,7 @@ def main():
 #    locoL = Loco(nnz)
 #    
  #   print(locoL)
-=======
+
     plt.scatter(angles, radius,0.1,'b')
     
     ##################################
@@ -335,7 +338,7 @@ def main():
 #    locoL = Loco(nnz)
 #    
 #    print(locoL)
->>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
+
     
     
     plt.show()
