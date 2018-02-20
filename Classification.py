@@ -7,29 +7,54 @@ from sklearn.model_selection import train_test_split
 import os
 from feature1 import main
 
-label_names = ['Carya','Cornus','Fraxinus',
+label_names = ['Acer','Aesculus','Betula','Carya','Cornus','Fraxinus',
 				'Magnolia','Malus','Pinus','Populus','Prunus','Quercus','Salix']
-labels = []
+
 #it is possible to get this to seperate into test/training data
 input_path = 'LabSeg2/TrainSeg2/'
 folders = next(os.walk(input_path))[1]
 fol = 0
+labels = []
 features = []
-counter = 0
 for folder in folders:
 	files = next(os.walk(input_path+folder))[2]
+	print(folder)
 	for file in files:
 		labels.append(fol)
 		#here you would add in the values for each feature for a single leaf
 		image = cv2.imread(input_path+folder+'/'+file,0)
 		found_features = round(main(image),2)
+		print(found_features)
 		features.append(found_features)
-		counter += 1
+		
 	fol += 1
+	
+input_path2 = 'LabSeg2/TestSeg2/'
+folders = next(os.walk(input_path))[1]
+fol = 0
+features2 = []
+labels2 = []
+for folder in folders:
+	files = next(os.walk(input_path+folder))[2]
 	print(folder)
-    
-print(shape(labels))
-print(shape(features))
+	for file in files:
+		labels2.append(fol)
+		#here you would add in the values for each feature for a single leaf
+		image = cv2.imread(input_path+folder+'/'+file,0)
+		found_features = round(main(image),2)
+		features2.append(found_features)
+		
+	fol += 1
+
+# np.savetxt('features.csv',features,delimiter=',')
+# np.savetxt('features2.csv',features2,delimiter=',')
+
+# features = np.fromfile('features.csv',dtype = float,sep=',',count=-1)
+# print(features)
+# features2 = np.fromfile('features2.csv',dtype = float,sep=',',count=-1)
+
+# features = features.resize([len(labels),1])
+# features2 = features2.resize([len(labels2),1])
 	
 # label_names = ['ficus','quercus']
 # q = np.loadtxt('./kernel_quercus5.txt')
@@ -45,8 +70,8 @@ print(shape(features))
 
 
 gnb = GaussianNB()
-model = gnb.fit(train,train_labels)
+model = gnb.fit(features,labels)
 
-preds = gnb.predict(test)
+preds = gnb.predict(features2)
 print(preds)
-print(accuracy_score(test_labels, preds))
+print(accuracy_score(labels2, preds))
