@@ -24,10 +24,10 @@ for folder in folders:
 		image = cv2.imread(input_path+folder+'/'+file,0)
 		found_features = round(main(image),2)
 		features.append(found_features)
+		print(folder)
 		counter += 1
 	fol += 1
-	print(folder)
-    
+	
 print(shape(labels))
 print(shape(features))
 	
