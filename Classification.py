@@ -22,10 +22,9 @@ for folder in folders:
 	for file in files:
 		labels.append(fol)
 		#here you would add in the values for each feature for a single leaf
-		image = cv2.imread(input_path+folder+'/'+file,0)
-		found_features = round(main(image),2)
-		print(found_features)
-		features.append(found_features)
+		# image = cv2.imread(input_path+folder+'/'+file,0)
+		# found_features = round(main(image),2)
+		# features.append(found_features)
 		
 	fol += 1
 	
@@ -40,25 +39,22 @@ for folder in folders:
 	for file in files:
 		labels2.append(fol)
 		#here you would add in the values for each feature for a single leaf
-		image = cv2.imread(input_path+folder+'/'+file,0)
-		found_features = round(main(image),2)
-		features2.append(found_features)
+		# image = cv2.imread(input_path+folder+'/'+file,0)
+		# found_features = round(main(image),2)
+		# features2.append(found_features)
 		
 	fol += 1
 
-# np.savetxt('features.csv',features,delimiter=',')
-# np.savetxt('features2.csv',features2,delimiter=',')
+# np.savetxt('features.txt',features)
+# np.savetxt('features2.txt',features2)
 
-# features = np.fromfile('features.csv',dtype = float,sep=',',count=-1)
-# print(features)
-# features2 = np.fromfile('features2.csv',dtype = float,sep=',',count=-1)
-
-# features = features.resize([len(labels),1])
-# features2 = features2.resize([len(labels2),1])
+features = np.loadtxt('./features.txt')
+features2 = np.loadtxt('./features2.txt')
 
 
-print(shape(labels))
-print(shape(features))
+features = np.reshape(features2,(shape(labels2)[0],1))
+features2 = np.reshape(features2,(shape(labels2)[0],1))
+
 
 	
 # label_names = ['ficus','quercus']
