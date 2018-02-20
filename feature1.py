@@ -39,7 +39,7 @@ def main(data):
     img[ld,lr:ll]=255
     img[ld:lu,ll]=255
     img[ld:lu,lr]=255   
-    cv2.imshow('a',img)
+    #cv2.imshow('a',img)
     total_area=(lr-ll)*(ld-lu)
     
     total_leaf=0
