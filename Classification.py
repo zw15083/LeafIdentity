@@ -55,6 +55,11 @@ for folder in folders:
 
 # features = features.resize([len(labels),1])
 # features2 = features2.resize([len(labels2),1])
+
+
+print(shape(labels))
+print(shape(features))
+
 	
 # label_names = ['ficus','quercus']
 # q = np.loadtxt('./kernel_quercus5.txt')
