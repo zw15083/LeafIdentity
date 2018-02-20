@@ -81,6 +81,7 @@ def CutOut(y):
     s2 = dilation(s2, disk(3))
 
     return x1,s1,x2,s2
+<<<<<<< HEAD
 #    
 ##y = imread('wb1127-03-2.jpg')
 #input_path = './Leaf_Samples/'
@@ -107,5 +108,33 @@ def CutOut(y):
 ##        imsave(output_paths1 + folder + '/' + file, s1)
 ##        imsave(output_pathx2 + folder + '/' + file, x2)
 #        imsave(output_paths2 + folder + '/' + file, s2)
+=======
+    
+#y = imread('wb1127-03-2.jpg')
+input_path = './Leaf_Samples/'
+#output_pathx1 = './output_segmentsx1/'
+#output_paths1 = './output_segmentss1/' 
+#output_pathx2 = './output_segmentsx2/'
+output_paths2 = './output_segmentss2/' 
+#
+folders = next(os.walk(input_path))[1]
+#
+for folder in folders:
+    files = next(os.walk(input_path+folder))[2]
+	
+	#create the output folder if it doesn't exist
+    if not os.path.exists(output_paths2 + folder):
+        os.makedirs(output_paths2 + folder)
+	
+	#go through all the images under this label (folder)
+    for file in files:
+        print('yay')
+        y = imread(input_path+folder+'/'+file)
+        x1,s1,x2,s2 = CutOut(y)
+#        imsave(output_pathx1 + folder + '/' + file, x1)
+#        imsave(output_paths1 + folder + '/' + file, s1)
+#        imsave(output_pathx2 + folder + '/' + file, x2)
+        imsave(output_paths2 + folder + '/' + file, s2)
+>>>>>>> 96d8b8c86bfd2e50a1072b7be757beef594db092
 
 		

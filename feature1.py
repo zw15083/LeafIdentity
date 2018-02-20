@@ -8,39 +8,39 @@ np.set_printoptions(threshold=np.inf)
 #cv2.imwrite('myTest.jpg',edges)
 
 def main(data):
-    #data='weed.jpg'
+    #data='dummyPics/ny1112-03-1.jpg'
     #data='myTestFilled.jpg'
-    #img=cv2.imread(data,0)
-    img = data
-    #edges=cv2.Canny(img,100,200)
+    img=data
+    edges=cv2.Canny(img,100,200)
     shape=np.shape(img)
     #print(shape)
-    midRow=int(shape[0]/2)
-    midCol=int(shape[1]/2)
+    topRow=0
+    botRow=int(shape[0]-1)
+    leftCol=0
+    rightCol=int(shape[1]-1)
     
-    lu=midRow
-    ld=midRow
-    lr=midCol
-    ll=midCol
+    lu=botRow
+    ld=topRow
+    lr=leftCol
+    ll=rightCol
     
-    while sum(img[lu,:]) >510: #>510 because there will a few white points due to non perfect image, 
-        lu-=1                  #hence stop when less than 2 white pixels (2*255=510)
-    while sum(img[ld,:]) >510:
+    while sum(img[lu,:]) <510: #>510 because there will a few white points due to non perfect image, 
+        lu-=1                  #hence stop when more than 2 white pixels (2*255=510)
+    while sum(img[ld,:]) <510:
         ld+=1  
-    while sum(img[:,ll]) >510:
+    while sum(img[:,ll]) <510:
         ll-=1
-    while sum(img[:,lr]) >510:
+    while sum(img[:,lr]) <510:
         lr+=1
     
   
     
-    img[lu,ll:lr]=255 
-    img[ld,ll:lr]=255
-    img[lu:ld,ll]=255
-    img[lu:ld,lr]=255   
-
+    img[lu,lr:ll]=255 
+    img[ld,lr:ll]=255
+    img[ld:lu,ll]=255
+    img[ld:lu,lr]=255   
+    #cv2.imshow('a',img)
     total_area=(lr-ll)*(ld-lu)
-    
     
     total_leaf=0
     for row in range(lu,ld):
