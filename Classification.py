@@ -11,7 +11,7 @@ label_names = ['Carya','Cornus','Fraxinus',
 				'Magnolia','Malus','Pinus','Populus','Prunus','Quercus','Salix']
 labels = []
 #it is possible to get this to seperate into test/training data
-input_path = '../LabSeg2/TrainSeg2/'
+input_path = 'LabSeg2/TrainSeg2/'
 folders = next(os.walk(input_path))[1]
 fol = 0
 features = []
@@ -24,10 +24,10 @@ for folder in folders:
 		image = cv2.imread(input_path+folder+'/'+file,0)
 		found_features = round(main(image),2)
 		features.append(found_features)
-		print(found_features)
 		counter += 1
 	fol += 1
-	
+	print(folder)
+    
 print(shape(labels))
 print(shape(features))
 	
