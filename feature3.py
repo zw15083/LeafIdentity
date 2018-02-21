@@ -8,17 +8,7 @@ from feature3_1 import ExtractReg
 from EMT import CutOut
 np.set_printoptions(threshold=np.inf)
 
-def contour(thresh):
-    # Contour of leaf on plain background, thickness 10
 
-
-    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    c = max(contours, key=cv2.contourArea) # draws largest contour
-
-    leaf_contour = cv2.drawContours(np.zeros(thresh.shape), [c], 0, (255, 255, 255), 8)
-    #note, argument = -1 draws all contours
-
-    return c, leaf_contour
 
 
 
@@ -29,25 +19,14 @@ def preprocTristan():
     #print(np.shape(a))
     _, thresh = cv2.threshold(grey, 127, 255,
                                cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-    c,leafcontour = contour(thresh) 
     
-    col=np.zeros(len(c))
-    row=np.zeros(len(c))
-    #loool=np.zeros(len(c))
-    for i in range(len(c)):
-      #print(c[i][0])
-      col[i],row[i]=c[i][0]
-      #print(c[i][0])
-    #print(loool)
-    print(len(col))
-    ok=[row,col]
     edges=cv2.Canny(thresh,100,200)
     nnz=np.nonzero(edges)
     z=len(nnz[0])
     
-    return thresh,edges,nnz,z,ok
+    return thresh,edges,nnz,z
   
-def main(thresh,img,nnz,z,ok):
+def main(thresh,img,nnz,z):
 
     #FIND CENTROID
     '''
@@ -125,7 +104,7 @@ def main(thresh,img,nnz,z,ok):
 
 
         
-a,b,c,d,ok=preprocTristan()
+a,b,c,d=preprocTristan()
 
 
 
@@ -133,4 +112,4 @@ a,b,c,d,ok=preprocTristan()
 #if __name__ == "__main__":
 #    main(a,b,c,d)
 
-main(a,b,c,d,ok)
+main(a,b,c,d)
