@@ -6,6 +6,7 @@ from scipy.misc import imread
 from scipy.misc import imshow
 from feature3_1 import ExtractReg
 from EMT import CutOut
+from scipy.signal import argrelextrema as argre
 np.set_printoptions(threshold=np.inf)
 
 
@@ -13,13 +14,10 @@ np.set_printoptions(threshold=np.inf)
 
 
 def preprocTristan():
-    img=cv2.imread('dummyPics/weedcolour.jpg')
+    img=cv2.imread('dummyPics/leaf1.jpg')
     grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    #a,b=contour(grey)
-    #print(np.shape(a))
     _, thresh = cv2.threshold(grey, 127, 255,
-                               cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-    
+                               cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)    
     edges=cv2.Canny(thresh,100,200)
     nnz=np.nonzero(edges)
     z=len(nnz[0])
@@ -32,16 +30,15 @@ def main(thresh,img,nnz,z):
     '''
     important: centroid is done on original image (before edge detection is made), otherwise centroid is shifted.
     '''
-    #sourceIm,contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
     image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    #cnt = max(contours, key = lambda x: cv2.contourArea(x))
     cnt = max(contours, key=cv2.contourArea)
-    print(len(cnt))
+   
     col=np.zeros(len(cnt))
     row=np.zeros(len(cnt))
-    #loool=np.zeros(len(c))
+  
     for i in range(len(cnt)):
-      #print(c[i][0])
+      
       col[i],row[i]=cnt[i][0]
     ok=[row,col]
     M = cv2.moments(cnt)
@@ -53,20 +50,19 @@ def main(thresh,img,nnz,z):
           
     cv2.imshow('thr',thresh)    
     cv2.imshow('original1',img)
+    
     ##normalised vector
     utop=[-20,0]
     ubot=[20,0]
     
-    #edge vector
-    
+    #edge vector   
     vx = ok[1] - cx
     vy = ok[0] - cy
     
     #find angle and radius of each edge point
-    angles=np.zeros(len(nnz[0]))
-    radius=np.zeros(len(nnz[0]))
-    #print(np.shape(vx))
-    #print(np.shape(nnz))
+    angles=np.zeros(len(vx))
+    RS=np.zeros(len(vx))
+    
     for i in range(0,len(vx)):
         #find angle
         if ok[0][i]>cy:#if edge point is under norm vector, add 180 deg
@@ -76,20 +72,23 @@ def main(thresh,img,nnz,z):
              angles[i]=np.arccos(np.dot(utop,[vx[i],vy[i]])/(norm(utop)*norm([vx[i],vy[i]])))*(180/np.pi)
         
         #find radius
-        radius[i]=round(norm([vx[i],vy[i]]),2)
+        RS[i]=round(norm([vx[i],vy[i]]),2)
     
-    print(radius)
-    #sort radius based on increasing angles
-    myZip=list(zip(angles,radius))
-    RS= [ x[1] for x in sorted(myZip) ]  #RS means radiusSorted
+    
+    
     
     #start radius list with max value     
-    radiusSorted=np.concatenate([RS[np.argmax(RS):],RS[:np.argmax(RS)]])
-    
+    radiusSorted=np.concatenate([RS[np.argmin(RS):],RS[:np.argmin(RS)]])
+    argOrder=15
+    argAll=argre(radiusSorted, np.greater,order=argOrder)
+    for i in argAll:
+      print(radiusSorted[i])
+    print('len=',np.shape(argre(radiusSorted, np.greater,order=argOrder))[1])
+    #print(RS)
     plt.figure()  
     #print(len)
     #plt.plot(sorted(angles),radiusSorted,'.')  
-    plt.plot(angles,radius,'.') 
+    plt.plot(angles,RS,'.') 
    
     ##########
   
@@ -99,7 +98,7 @@ def main(thresh,img,nnz,z):
 #    #print(radius)
 #    plt.figure() 
 #    plt.plot(angles,radius,'.') 
-    return radius
+    return RS
     
 
 
