@@ -21,22 +21,25 @@ def preproc(img):
     
     return thresh,edges,nnz
 
-def findMax(x,argOrder):
+def findMax(x,argOrder):   
     #start radius list with min value     
     max1=np.concatenate([x[np.argmin(x):],x[:np.argmin(x)]])
+    
     shift=np.argmax(max1)
     
     #find index of local max 
     localMax=argre(max1, np.greater,order=argOrder)
+
     pastMax=localMax-shift
     localMax=pastMax[0]
 
     #start radius list with max value 
-    min1=np.concatenate([max1[np.argmax(max1):],max1[:np.argmax(max1)]])
-    localMin=argre(min1, np.less,order=argOrder)   
+    radiusArray=np.concatenate([max1[np.argmax(max1):],max1[:np.argmax(max1)]])
+    localMin=argre(radiusArray, np.less,order=argOrder)   
+
     nOfMax=np.shape(pastMax)[1]
-    
-    return min1,nOfMax,localMax,localMin
+    localMax,localMin=radiusArray[localMax],radiusArray[localMin]
+    return radiusArray,nOfMax,localMax,localMin
   
 def graphNorm(x):
     maxRatio=max(x)
@@ -94,20 +97,27 @@ def main(img):
         RS[i]=round(norm([vx[i],vy[i]]),2)
         
     normRS=graphNorm(RS)
-    plt.figure()      
-    plt.plot(angles,normRS,'.') 
+    #plt.figure()      
+    #plt.plot(angles,normRS,'.') 
     
     #find local max
-    lol,_,bigMax,bigMin=findMax(normRS,20)
-    #smallMax=findMax(RS,10)
+    newRS,nOfMax,bigMax,bigMin=findMax(normRS,20)
     
+    plt.plot(np.linspace(0,len(newRS),len(newRS)),newRS) 
+    #smallMax=findMax(RS,10)
     print(bigMax)
-    print('max=',lol[bigMax])
-    print('min=',lol[bigMin])
+    print(bigMin)
+    diff=np.zeros(len(bigMax)+1)
+    for i in range(1,len(bigMax)):
+      diff[i]=bigMax[i]-bigMin[i-1]
+      diff[i+1]=bigMax[i]-bigMin[i]
+      i+=1
+    print(diff)
+    
     #if abs(bigMax-smallMax)>
 #    print('bm=',bigMax)
 #    print('sm=',smallMax)
-    return bigMax
+    return nOfMax
         
 
 
@@ -117,4 +127,4 @@ def main(img):
 #if __name__ == "__main__":
 #    main(a,b,c)
 
-main(cv2.imread('dummyPics/leaf1.jpg'))
+main(cv2.imread('dummyPics/weedcolour.jpg'))
