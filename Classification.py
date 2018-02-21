@@ -56,18 +56,7 @@ features = np.reshape(features2,(shape(labels2)[0],1))
 features2 = np.reshape(features2,(shape(labels2)[0],1))
 
 
-	
-# label_names = ['ficus','quercus']
-# q = np.loadtxt('./kernel_quercus5.txt')
-# f = np.loadtxt('./kernel_ficus5.txt')
-# features = np.concatenate((f, q))
-# zero = zeros(f.shape[0])
-# one = ones(q.shape[0])
-# labels = np.concatenate((zero, one))
-# train, test, train_labels, test_labels = train_test_split(features,
-                                                          # labels,
-                                                          # test_size=0.33,
-                                                          # random_state=42)
+
 
 
 gnb = GaussianNB()
