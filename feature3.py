@@ -28,17 +28,15 @@ def findMax(x,argOrder):
     
     #find index of local max 
     localMax=argre(max1, np.greater,order=argOrder)
-#    print(localMax)
-#    print(shift)
     pastMax=localMax-shift
-    print(pastMax)
+    localMax=pastMax[0]
+
     #start radius list with max value 
     min1=np.concatenate([max1[np.argmax(max1):],max1[:np.argmax(max1)]])
-    localMin=argre(min1, np.less,order=argOrder)
-    
-    
+    localMin=argre(min1, np.less,order=argOrder)   
     nOfMax=np.shape(pastMax)[1]
-    return min1,nOfMax,pastMax,localMin
+    
+    return min1,nOfMax,localMax,localMin
   
 def graphNorm(x):
     maxRatio=max(x)
@@ -103,7 +101,7 @@ def main(img):
     lol,_,bigMax,bigMin=findMax(normRS,20)
     #smallMax=findMax(RS,10)
     
-#    print(bigMax)
+    print(bigMax)
     print('max=',lol[bigMax])
     print('min=',lol[bigMin])
     #if abs(bigMax-smallMax)>
