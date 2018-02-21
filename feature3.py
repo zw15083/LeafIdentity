@@ -34,6 +34,12 @@ def findMax(x,argOrder):
     result=np.shape(argAll)[1]
     return result
   
+def graphNorm(x):
+    maxRatio=max(x)
+    y=x/maxRatio
+    return(y)    
+      
+  
 def main(img):
     thresh,edges,nnz=preproc(img)
     #FIND CENTROID    
@@ -79,9 +85,10 @@ def main(img):
              angles[i]=np.arccos(np.dot(utop,[vx[i],vy[i]])/(norm(utop)*norm([vx[i],vy[i]])))*(180/np.pi)       
         #find radius
         RS[i]=round(norm([vx[i],vy[i]]),2)
-
-    #plt.figure()      
-    #plt.plot(angles,RS,'.') 
+        
+    normRS=graphNorm(RS)
+    plt.figure()      
+    plt.plot(angles,normRS,'.') 
     
     #find local max
     bigMax=findMax(RS,20)
