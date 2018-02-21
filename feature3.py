@@ -46,7 +46,23 @@ def graphNorm(x):
     y=x/maxRatio
     return(y)    
       
-#def maxMinDiff(x,localMax):
+def maxMinDiff(bigMax,bigMin):
+    #initialisation
+    diffLeft=np.zeros(len(bigMax))    
+    diffRight=np.zeros(len(bigMax))
+    
+    #first element only    
+    diffLeft[0]=bigMax[0]-bigMin[-1]
+    diffRight[0]=bigMax[0]-bigMin[0]
+
+    if len(bigMax)>1:#if there are more than 1 max
+      for i in range(1,len(bigMax)):
+        diffLeft[i]=round(bigMax[i],2)-round(bigMin[i-1],2)
+        diffRight[i]=round(bigMax[i],2)-round(bigMin[i],2)
+      
+    allDiff=np.concatenate([diffLeft,diffRight])    
+    print(np.mean(allDiff))
+    print(max(allDiff))
     
 
   
@@ -105,14 +121,7 @@ def main(img):
     
     plt.plot(np.linspace(0,len(newRS),len(newRS)),newRS) 
     #smallMax=findMax(RS,10)
-    print(bigMax)
-    print(bigMin)
-    diff=np.zeros(len(bigMax)+1)
-    for i in range(1,len(bigMax)):
-      diff[i]=bigMax[i]-bigMin[i-1]
-      diff[i+1]=bigMax[i]-bigMin[i]
-      i+=1
-    print(diff)
+    maxMinDiff(bigMax,bigMin)
     
     #if abs(bigMax-smallMax)>
 #    print('bm=',bigMax)
