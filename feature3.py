@@ -20,24 +20,7 @@ def contour(thresh):
 
     return c, leaf_contour
 
-def preprocScott():
-    img=cv2.imread('dummyPics/leaf1.jpg')
-    x1,s1,x2,s2 = CutOut(img)
-    thresh = 255*s2.astype(np.uint8)
-    #cv2.imshow('a',thresh)
-    c,leafcontour = contour(thresh) 
-    
-    col=np.zeros(len(c))
-    row=np.zeros(len(c))
-    #loool=np.zeros(len(c))
-    for i in range(len(c)):
-      #print(c[i][0])
-      col[i],row[i]=c[i][0]
-      #print(c[i][0])
-    #print(loool)
-    lol=[row,col]
-    #print(lol)
-    return img,thresh,lol
+
 
 def preprocTristan():
     img=cv2.imread('dummyPics/leaf1.jpg')
@@ -56,7 +39,7 @@ def preprocTristan():
       col[i],row[i]=c[i][0]
       #print(c[i][0])
     #print(loool)
-    lol=[row,col]
+    ok=[row,col]
     edges=cv2.Canny(thresh,100,200)
     nnz=np.nonzero(edges)
     z=len(nnz[0])
@@ -131,7 +114,7 @@ def main(thresh,img,nnz,z,ok):
     
 
 
-#aa,bb,ok=preprocScott()        
+        
 a,b,c,d,ok=preprocTristan()
 
 
