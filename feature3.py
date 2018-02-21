@@ -23,22 +23,31 @@ def preproc(img):
 
 def findMax(x,argOrder):
     #start radius list with min value     
-    x=np.concatenate([x[np.argmin(x):],x[:np.argmin(x)]])
+    max1=np.concatenate([x[np.argmin(x):],x[:np.argmin(x)]])
+    shift=np.argmax(max1)
     
-    #find local max
-    argAll=argre(x, np.greater,order=argOrder)
+    #find index of local max 
+    localMax=argre(max1, np.greater,order=argOrder)
+#    print(localMax)
+#    print(shift)
+    pastMax=localMax-shift
+    print(pastMax)
+    #start radius list with max value 
+    min1=np.concatenate([max1[np.argmax(max1):],max1[:np.argmax(max1)]])
+    localMin=argre(min1, np.less,order=argOrder)
     
-#    for i in argAll:
-#      print(radiusSorted[i])
-#    print('len=',np.shape(argre(radiusSorted, np.greater,order=argOrder))[1])
-    result=np.shape(argAll)[1]
-    return result
+    
+    nOfMax=np.shape(pastMax)[1]
+    return min1,nOfMax,pastMax,localMin
   
 def graphNorm(x):
     maxRatio=max(x)
     y=x/maxRatio
     return(y)    
       
+#def maxMinDiff(x,localMax):
+    
+
   
 def main(img):
     thresh,edges,nnz=preproc(img)
@@ -91,9 +100,12 @@ def main(img):
     plt.plot(angles,normRS,'.') 
     
     #find local max
-    bigMax=findMax(RS,20)
-    smallMax=findMax(RS,10)
+    lol,_,bigMax,bigMin=findMax(normRS,20)
+    #smallMax=findMax(RS,10)
     
+#    print(bigMax)
+    print('max=',lol[bigMax])
+    print('min=',lol[bigMin])
     #if abs(bigMax-smallMax)>
 #    print('bm=',bigMax)
 #    print('sm=',smallMax)
