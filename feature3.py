@@ -4,8 +4,6 @@ import cv2
 import matplotlib.pyplot as plt
 from scipy.misc import imread
 from scipy.misc import imshow
-from feature3_1 import ExtractReg
-from EMT import CutOut
 from scipy.signal import argrelextrema as argre
 np.set_printoptions(threshold=np.inf)
 
@@ -14,8 +12,10 @@ np.set_printoptions(threshold=np.inf)
 
 
 def preproc(img):
-    grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    _,thresh = cv2.threshold(grey, 127, 255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)    
+    #grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    grey = img
+    #_,thresh = cv2.threshold(grey, 127, 255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    thresh=grey    
     edges=cv2.Canny(thresh,100,200)
     nnz=np.nonzero(edges)
     
@@ -117,11 +117,12 @@ def main(img):
     #plt.plot(angles,normRS,'.') 
     
     #find local max
-    newRS,nOfMax,bigMax,bigMin=findMax(normRS,20)
-    
-    plt.plot(np.linspace(0,len(newRS),len(newRS)),newRS) 
+    newRS,nOfMax,bigMax,bigMin=findMax(normRS,40)
+    # print(bigMax)
+    # plt.plot(np.linspace(0,len(newRS),len(newRS)),newRS) 
+    # plt.show()
     #smallMax=findMax(RS,10)
-    maxMinDiff(bigMax,bigMin)
+    #maxMinDiff(bigMax,bigMin)
     
     #if abs(bigMax-smallMax)>
 #    print('bm=',bigMax)
@@ -136,4 +137,5 @@ def main(img):
 #if __name__ == "__main__":
 #    main(a,b,c)
 
-main(cv2.imread('dummyPics/weedcolour.jpg'))
+#main(cv2.imread('LabSeg2/TrainSeg2/Acer/wb1128-01-1.jpg',0))
+#main(cv2.imread('weedcolour.jpg'))
