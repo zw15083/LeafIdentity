@@ -27,18 +27,19 @@ def UseLocoEfa(s):
     
     c,leafcontour = contour(thresh)
     
-    edges = np.zeros(c.shape[0])
+    edges = np.zeros(thresh.shape)
     
-#    print
+    
     
     for i in range(c.shape[0]):
         edges[c[i][0][1]][c[i][0][0]] = 1
 
-    nnz=np.zeros(c.shape[0],2)
+    x=np.zeros(c.shape[0])
+    y=np.zeros(c.shape[0])
     
     for i in range(c.shape[0]):
-        nnz[0][i] = c[i][0][0]
-        nnz[1][i] = c[i][0][1]  
+        y[i] = c[i][0][0]
+        x[i] = c[i][0][1]  
         
     #########################################
     # C stuff here
