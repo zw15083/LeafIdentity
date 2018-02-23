@@ -79,8 +79,8 @@ def maxMinDiff(Max,Min):
 
   
 def main(img):
-    plt.close("all")
-    cv2.imshow('og',img)
+    #plt.close("all")
+    #cv2.imshow('og',img)
     thresh,edges,nnz=preproc(img)
     #FIND CENTROID    
     #important: centroid is done on original image (before edge detection is made), otherwise centroid is shifted.
@@ -125,6 +125,7 @@ def main(img):
              angles[i]=np.arccos(np.dot(utop,[vx[i],vy[i]])/(norm(utop)*norm([vx[i],vy[i]])))*(180/np.pi)       
         #find radius
         RS[i]=round(norm([vx[i],vy[i]]),2)
+        
     #savitzky golay filter
     savRS=savgol_filter(RS, 51, 2)
     normRS=graphNorm(savRS)
@@ -132,17 +133,16 @@ def main(img):
     #plt.figure()      
     #plt.plot(angles,normRS,'.') 
     
+    
+    normRS=savgol_filter(normRS, 101, 2)
     #plt.figure()
     #plt.plot(np.linspace(0,len(normRS),len(normRS)),normRS) 
-    normRS=savgol_filter(normRS, 101, 2)
-    plt.figure()
-    plt.plot(np.linspace(0,len(normRS),len(normRS)),normRS) 
     
-    
-    #find local max
-
+    #find local max one being harsh:hugeMax the other flexible: smallMax
     newRS,smallMax,bigMax,bigMin=findMax(normRS,60)
     _,hugeMax,_,_=findMax(normRS,230)
+    
+    #post processing of max
     if abs(hugeMax-smallMax)>3:
       if smallMax>8:
         finalMax=hugeMax
@@ -152,7 +152,7 @@ def main(img):
       finalMax=hugeMax
     
 
-    newRS,nOfMax,bigMax,bigMin=findMax(normRS,40)
+    
     # print(bigMax)
     # plt.plot(np.linspace(0,len(newRS),len(newRS)),newRS) 
     # plt.show()
@@ -160,7 +160,7 @@ def main(img):
     #maxMinDiff(bigMax,bigMin)
 
     
-    mmdiff=maxMinDiff(smallMax,bigMin)
+    mmdiff=maxMinDiff(bigMax,bigMin)
     #print(finalMax,hugeMax,smallMax,mmdiff)
     return finalMax,mmdiff
         
