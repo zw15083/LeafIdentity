@@ -20,6 +20,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.metrics import confusion_matrix
 
 label_names = ['Acer','Aesculus','Betula','Carya','Cornus','Fraxinus',
 				'Magnolia','Malus','Pinus','Populus','Prunus','Quercus','Salix']
@@ -171,3 +172,4 @@ clf.fit(featureTrain,labels)
 preds = clf.predict(featureTest)
 print(preds)
 print(accuracy_score(labels2, preds))
+print(confusion_matrix(labels2, preds))
