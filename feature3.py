@@ -168,7 +168,7 @@ def main(img):
 
 
 
-main(cv2.imread('LabSeg2/TrainSeg2/Acer/ny1011-06-1.jpg',0))
+#main(cv2.imread('LabSeg2/TrainSeg2/Acer/ny1011-06-1.jpg',0))
 
 
     

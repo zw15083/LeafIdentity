@@ -78,7 +78,7 @@ def get_feature():
 			image = cv2.imread(input_path+folder+'/'+file,0)
 			# [max,cont] = contour(image)
 			# found_features = bounding_box(max)
-			found_features = round(f3.main(image),2)
+			bigmax,mmdiff = round(f3.main(image),2)
 			# found_features = round(f1.main(image),2)
 			features.append(found_features)
 			
@@ -97,7 +97,7 @@ def get_feature():
 			image = cv2.imread(input_path2+folder+'/'+file,0)
 			# [max,cont] = contour(image)
 			# found_features = bounding_box(max)
-			found_features = round(f3.main(image),2)
+			bigmax,mmdiff = round(f3.main(image),2)
 			# found_features = round(f1.main(image),2)
 			features2.append(found_features)
 			
