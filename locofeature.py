@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.misc import imread
 from scipy.misc import imshow
 np.set_printoptions(threshold=np.inf)
-from EM import CutOut
+#from EM import CutOut
 from scipy import ndimage
 
 def contour(thresh):
@@ -44,5 +44,6 @@ def UseLocoEfa(s):
     #########################################
     # C stuff here
     ########################################
+    return c
 #    
     
