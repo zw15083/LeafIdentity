@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.misc import imread
 from scipy.misc import imshow
 from scipy.signal import argrelextrema as argre
+from scipy.signal import savgol_filter
 np.set_printoptions(threshold=np.inf)
 
 
@@ -13,12 +14,17 @@ np.set_printoptions(threshold=np.inf)
 
 def preproc(img):
     #grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+    #_,thresh = cv2.threshold(grey, 127, 255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)    
+    edges=cv2.Canny(img,100,200)
+
     grey = img
     #_,thresh = cv2.threshold(grey, 127, 255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
     thresh=grey    
     edges=cv2.Canny(thresh,100,200)
+
     nnz=np.nonzero(edges)
-    
+    thresh=img
     return thresh,edges,nnz
 
 def findMax(x,argOrder):   
@@ -29,7 +35,7 @@ def findMax(x,argOrder):
     
     #find index of local max 
     localMax=argre(max1, np.greater,order=argOrder)
-
+    #print(localMax)
     pastMax=localMax-shift
     localMax=pastMax[0]
 
@@ -39,6 +45,10 @@ def findMax(x,argOrder):
 
     nOfMax=np.shape(pastMax)[1]
     localMax,localMin=radiusArray[localMax],radiusArray[localMin]
+    
+    #post processing
+    #for i in localMax:
+     # print(i)
     return radiusArray,nOfMax,localMax,localMin
   
 def graphNorm(x):
@@ -46,27 +56,31 @@ def graphNorm(x):
     y=x/maxRatio
     return(y)    
       
-def maxMinDiff(bigMax,bigMin):
-    #initialisation
-    diffLeft=np.zeros(len(bigMax))    
-    diffRight=np.zeros(len(bigMax))
-    
-    #first element only    
-    diffLeft[0]=bigMax[0]-bigMin[-1]
-    diffRight[0]=bigMax[0]-bigMin[0]
-
-    if len(bigMax)>1:#if there are more than 1 max
-      for i in range(1,len(bigMax)):
-        diffLeft[i]=round(bigMax[i],2)-round(bigMin[i-1],2)
-        diffRight[i]=round(bigMax[i],2)-round(bigMin[i],2)
-      
-    allDiff=np.concatenate([diffLeft,diffRight])    
-    print(np.mean(allDiff))
-    print(max(allDiff))
+def maxMinDiff(Max,Min):
+   
+  
+#    #initialisation
+#    diffLeft=np.zeros(len(Max))    
+#    diffRight=np.zeros(len(Max))
+#    
+#    #first element only    
+#    diffLeft[0]=Max[0]-Min[-1]
+#    diffRight[0]=Max[0]-Min[0]
+#    print(len(Min))
+#    if len(bigMax)>1:#if there are more than 1 max
+#      for i in range(1,len(Max)):
+#        diffLeft[i]=round(Max[i],2)-round(Min[i-1],2)
+#        diffRight[i]=round(Max[i],2)-round(Min[i],2)
+#      
+#    allDiff=np.concatenate([diffLeft,diffRight])    
+#    
+    return abs(np.max(Max)-np.min(Min))
     
 
   
 def main(img):
+    #plt.close("all")
+    #cv2.imshow('og',img)
     thresh,edges,nnz=preproc(img)
     #FIND CENTROID    
     #important: centroid is done on original image (before edge detection is made), otherwise centroid is shifted.
@@ -112,25 +126,49 @@ def main(img):
         #find radius
         RS[i]=round(norm([vx[i],vy[i]]),2)
         
-    normRS=graphNorm(RS)
+    #savitzky golay filter
+    savRS=savgol_filter(RS, 51, 2)
+    normRS=graphNorm(savRS)
+    
     #plt.figure()      
     #plt.plot(angles,normRS,'.') 
     
-    #find local max
-    newRS,nOfMax,bigMax,bigMin=findMax(normRS,40)
+    
+    normRS=savgol_filter(normRS, 101, 2)
+    #plt.figure()
+    #plt.plot(np.linspace(0,len(normRS),len(normRS)),normRS) 
+    
+    #find local max one being harsh:hugeMax the other flexible: smallMax
+    newRS,smallMax,bigMax,bigMin=findMax(normRS,60)
+    _,hugeMax,_,_=findMax(normRS,230)
+    
+    #post processing of max
+    if abs(hugeMax-smallMax)>3:
+      if smallMax>8:
+        finalMax=hugeMax
+      else:
+        finalMax=smallMax
+    else:
+      finalMax=hugeMax
+    
+
+    
     # print(bigMax)
     # plt.plot(np.linspace(0,len(newRS),len(newRS)),newRS) 
     # plt.show()
     #smallMax=findMax(RS,10)
     #maxMinDiff(bigMax,bigMin)
+
     
-    #if abs(bigMax-smallMax)>
-#    print('bm=',bigMax)
-#    print('sm=',smallMax)
-    return nOfMax
+    mmdiff=maxMinDiff(bigMax,bigMin)
+    #print(finalMax,hugeMax,smallMax,mmdiff)
+    return finalMax,mmdiff
         
 
 
+
+
+main(cv2.imread('LabSeg2/TrainSeg2/Acer/ny1011-06-1.jpg',0))
 
 
     
@@ -139,3 +177,4 @@ def main(img):
 
 #main(cv2.imread('LabSeg2/TrainSeg2/Acer/wb1128-01-1.jpg',0))
 #main(cv2.imread('weedcolour.jpg'))
+
