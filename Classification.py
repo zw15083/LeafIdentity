@@ -60,8 +60,8 @@ def get_cfeature():
 		fol += 1
 
 	#print(features)
-	np.savetxt('cfeature.txt',features)
-	np.savetxt('cfeature2.txt',features2)
+	np.savetxt('cfeature1.txt',features)
+	np.savetxt('cfeature12.txt',features2)
 				
 def get_feature():
 
@@ -113,7 +113,6 @@ def get_label():
 	folders = next(os.walk(input_path))[1]
 	fol = 0
 	labels = []
-	features = []
 	for folder in folders:
 		files = next(os.walk(input_path+folder))[2]
 		print(folder)
@@ -125,7 +124,6 @@ def get_label():
 	input_path2 = 'LabSeg2/TestSeg2/'
 	folders = next(os.walk(input_path2))[1]
 	fol = 0
-	features2 = []
 	labels2 = []
 	for folder in folders:
 		files = next(os.walk(input_path2+folder))[2]
@@ -134,6 +132,8 @@ def get_label():
 			labels2.append(fol)
 			
 		fol += 1
+	np.savetxt('trainlabel.txt',labels)
+	np.savetxt('testlabel.txt',labels2)
 	return [labels,labels2]
 
 #get_feature()
@@ -146,6 +146,8 @@ tbox1 = np.loadtxt('./tbox.txt')
 tbox2 = np.loadtxt('./tbox2.txt')
 cfeature = np.loadtxt('./cfeature.txt')
 cfeature2 = np.loadtxt('./cfeature2.txt')
+# cfeature = np.loadtxt('./cfeature1.txt')
+# cfeature2 = np.loadtxt('./cfeature12.txt')
 [labels,labels2] = get_label()
 # print(labels)
 
@@ -157,8 +159,11 @@ feature31 = np.reshape(npeaks1,(shape(labels)[0],1))
 feature32 = np.reshape(npeaks2,(shape(labels2)[0],1))
 featureTrain = column_stack((features11,features21,feature31,cfeature))
 featureTest = column_stack((features12,features22,feature32,cfeature2))
-print(shape(featureTrain))
-print(shape(featureTest))
+# print(shape(featureTrain))
+# print(shape(featureTest))
+
+# featureTrain = cfeature
+# featureTest = cfeature2
 
 # gnb = GaussianNB()
 # model = gnb.fit(feature1,labels)
@@ -167,7 +172,9 @@ print(shape(featureTest))
 # print(preds)
 # print(accuracy_score(labels2, preds))
 
-clf = DecisionTreeClassifier(max_depth=4)
+#clf = DecisionTreeClassifier(max_depth=4)
+#clf = SVC()
+clf = SVC(kernel="linear", class_weight='balanced', probability=True)
 clf.fit(featureTrain,labels)
 preds = clf.predict(featureTest)
 print(preds)
